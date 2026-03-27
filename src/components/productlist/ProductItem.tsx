@@ -1,3 +1,4 @@
+import React from 'react'
 import { Product, pricingOption } from './ProductList'
 
 interface ProductItemProps {

@@ -88,7 +88,8 @@ const actions = {
 }
 
 export function appReducer(state: AppState, action: AppAction): AppState {
-  return produce(state, (draft) => {
+  const currentState = state || initialState
+  return produce(currentState, (draft) => {
     const handler = actions[action.type as keyof typeof actions]
     if (handler) {
       handler(draft, action)

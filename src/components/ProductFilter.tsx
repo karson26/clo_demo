@@ -1,3 +1,4 @@
+import React from 'react'
 import { useStore } from '../store'
 import { pricingOption } from './productlist/ProductList'
 import SearchIcon from './SearchIcon'
