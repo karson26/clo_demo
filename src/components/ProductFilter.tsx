@@ -2,13 +2,10 @@ import { useStore } from '../store'
 import { pricingOption } from './productlist/ProductList'
 import SearchIcon from './SearchIcon'
 import PriceSlider from './PriceSlider'
-import { useDebounce } from '../hooks/useDebounce'
 
 const ProductFilter = () => {
   const { state, dispatch } = useStore()
   const { selectedFilters, searchTerm, priceRange } = state.filter
-
-  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   const updateURL = (filters: number[], search: string) => {
     const params = new URLSearchParams(window.location.search)
@@ -31,12 +28,13 @@ const ProductFilter = () => {
       ? selectedFilters.filter((f) => f !== option)
       : [...selectedFilters, option]
     dispatch({ type: 'SET_FILTERS', payload: newFilters })
-    updateURL(newFilters, debouncedSearchTerm)
+    updateURL(newFilters, searchTerm)
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSearchTerm = e.target.value
     dispatch({ type: 'SET_SEARCH_TERM', payload: newSearchTerm })
+    updateURL(selectedFilters, newSearchTerm)
   }
 
   const handlePriceRangeChange = (newPriceRange: [number, number]) => {

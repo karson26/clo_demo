@@ -2,7 +2,6 @@ import { useEffect, useRef, useCallback, useMemo, useState, lazy, Suspense } fro
 import { useStore } from '../../store'
 import ProductSkeleton from './ProductSkeleton'
 import { API_URL, sortProducts } from '../../utils/utils'
-import { useDebounce } from '../../hooks/useDebounce'
 
 const ProductItem = lazy(() => import('./ProductItem'))
 
@@ -28,7 +27,6 @@ const ProductList = () => {
   const { selectedFilters, searchTerm, priceRange } = filter
 
   const [sort, setSort] = useState('item-name')
-  const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   const observerTarget = useRef<HTMLDivElement>(null)
 
@@ -54,9 +52,9 @@ const ProductList = () => {
   const filteredData = useMemo(() => {
     let filtered = allData
 
-    if (debouncedSearchTerm) {
+    if (searchTerm) {
       filtered = filtered.filter((item) =>
-        item.title.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
@@ -70,7 +68,7 @@ const ProductList = () => {
     })
 
     return sortProducts(filtered, sort)
-  }, [allData, debouncedSearchTerm, selectedFilters, sort, priceRange])
+  }, [allData, searchTerm, selectedFilters, sort, priceRange])
 
   useEffect(() => {
     if (filteredData.length > 0) {

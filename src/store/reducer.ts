@@ -16,6 +16,30 @@ export const initialState: AppState = {
   },
 }
 
+const filterAndSetShowData = (state: AppState) => {
+  const { allData, pageSize } = state.product
+  const { selectedFilters, searchTerm, priceRange } = state.filter
+
+  let filtered = allData
+
+  if (searchTerm) {
+    filtered = filtered.filter((item) =>
+      item.title.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }
+
+  if (selectedFilters.length > 0) {
+    filtered = filtered.filter((item) => selectedFilters.includes(item.pricingOption))
+  }
+
+  filtered = filtered.filter((item) => {
+    if (item.pricingOption !== 0) return true
+    return item.price >= priceRange[0] && item.price <= priceRange[1]
+  })
+
+  state.product.showData = filtered.slice(0, pageSize)
+}
+
 const actions = {
   SET_ALL_DATA: (state: AppState, action: AppAction) => {
     if (action.type === 'SET_ALL_DATA') {
@@ -41,6 +65,7 @@ const actions = {
   SET_FILTERS: (state: AppState, action: AppAction) => {
     if (action.type === 'SET_FILTERS') {
       state.filter.selectedFilters = action.payload
+      filterAndSetShowData(state)
     }
   },
   SET_SORT: (state: AppState, action: AppAction) => {
@@ -51,11 +76,13 @@ const actions = {
   SET_SEARCH_TERM: (state: AppState, action: AppAction) => {
     if (action.type === 'SET_SEARCH_TERM') {
       state.filter.searchTerm = action.payload
+      filterAndSetShowData(state)
     }
   },
   SET_PRICE_RANGE: (state: AppState, action: AppAction) => {
     if (action.type === 'SET_PRICE_RANGE') {
       state.filter.priceRange = action.payload
+      filterAndSetShowData(state)
     }
   },
 }
